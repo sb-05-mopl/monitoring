@@ -1,0 +1,98 @@
+name: 'Move Issue to Done on PR Merge'
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  move_issue_to_done:
+    name: Move Issue to Done
+    runs-on: ubuntu-latest
+
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: 'Find issue from branch and update project'
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.ORG_PROJECT_ID }}
+          STATUS_FIELD_ID: ${{ secrets.ORG_STATUS_FIELD_ID }}
+          DONE_OPTION_ID: ${{ secrets.ORG_STATUS_DONE_ID }}
+        with:
+          github-token: ${{ secrets.ORG_PROJECT_PAT }}
+
+          script: |
+            const { PROJECT_ID, STATUS_FIELD_ID, DONE_OPTION_ID } = process.env;
+
+            const branchName = "${{ github.event.pull_request.head.ref }}";
+            const issueNumberMatch = branchName.match(/(\d+)$/);
+            
+            if (!issueNumberMatch) {
+              console.log(`Branch name '${branchName}' does not end in a number. Skipping.`);
+              return;
+            }
+            const issueNumber = parseInt(issueNumberMatch[1], 10);
+            console.log(`Found issue number: ${issueNumber} from branch ${branchName}`);
+
+            let issueNodeId;
+            try {
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              issueNodeId = issue.data.node_id;
+              console.log(`Found issue Node ID: ${issueNodeId}`);
+            } catch (e) {
+              console.log(`Could not find issue #${issueNumber}. Skipping.`);
+              return;
+            }
+
+            const query = `
+              query($issueNodeId: ID!) {
+                node(id: $issueNodeId) {
+                  ... on Issue {
+                    projectItems(first: 20) {
+                      nodes {
+                        id
+                        project { id }
+                      }
+                    }
+                  }
+                }
+              }`;
+            
+            const variables = { issueNodeId };
+            const result = await github.graphql(query, variables);
+            
+            const projectItem = result.node.projectItems.nodes.find(item => item.project.id === PROJECT_ID);
+
+            if (!projectItem) {
+              console.log(`Issue #${issueNumber} is not in project ${PROJECT_ID}. Skipping.`);
+              return;
+            }
+            const projectItemId = projectItem.id;
+            console.log(`Found Project Item ID: ${projectItemId}`);
+
+            const mutation = `
+              mutation($project_id: ID!, $item_id: ID!, $field_id: ID!, $option_id: String!) {
+                updateProjectV2ItemFieldValue(
+                  input: {
+                    projectId: $project_id,
+                    itemId: $item_id,
+                    fieldId: $field_id,
+                    value: { singleSelectOptionId: $option_id }
+                  }
+                ) {
+                  clientMutationId
+                }
+              }`;
+            const mutationVars = {
+              project_id: PROJECT_ID,
+              item_id: projectItemId,
+              field_id: STATUS_FIELD_ID,
+              option_id: DONE_OPTION_ID
+            };
+            
+            await github.graphql(mutation, mutationVars);
+            console.log(`Successfully updated issue #${issueNumber} status to 'Done'.`);

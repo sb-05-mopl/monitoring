@@ -1,0 +1,128 @@
+name: 'Move Issue to In Progress'
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+      - 'master'
+      - 'develop'
+
+jobs:
+  move_issue_to_progress:
+    name: Move Issue to In Progress
+    runs-on: ubuntu-latest
+    if: github.event.before == '0000000000000000000000000000000000000000'
+
+    steps:
+      - name: 'Extract issue number and update project'
+        uses: actions/github-script@v7
+        env:
+          PROJECT_ID: ${{ secrets.ORG_PROJECT_ID }}
+          STATUS_FIELD_ID: ${{ secrets.ORG_STATUS_FIELD_ID }}
+          IN_PROGRESS_OPTION_ID: ${{ secrets.ORG_STATUS_IN_PROGRESS_ID }}
+          TODO_OPTION_ID: ${{ secrets.ORG_STATUS_TODO_ID }}
+        with:
+          github-token: ${{ secrets.ORG_PROJECT_PAT }}
+
+          script: |
+            const { PROJECT_ID, STATUS_FIELD_ID, IN_PROGRESS_OPTION_ID, TODO_OPTION_ID } = process.env;
+
+            if (!TODO_OPTION_ID) {
+              core.setFailed('Error: ORG_STATUS_TODO_ID secret is not set.');
+              return;
+            }
+            if (!STATUS_FIELD_ID) {
+              core.setFailed('Error: ORG_STATUS_FIELD_ID secret is not set.');
+              return;
+            }
+
+            const branchName = "${{ github.ref_name }}";
+            const issueNumberMatch = branchName.match(/(\d+)$/);
+            
+            if (!issueNumberMatch) {
+              console.log(`Branch name '${branchName}' does not end in a number. Skipping.`);
+              return;
+            }
+            const issueNumber = parseInt(issueNumberMatch[1], 10);
+            console.log(`Found issue number: ${issueNumber}`);
+
+            let issueNodeId;
+            try {
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              issueNodeId = issue.data.node_id;
+              console.log(`Found issue Node ID: ${issueNodeId}`);
+            } catch (e) {
+              console.log(`Could not find issue #${issueNumber}. Skipping.`);
+              return;
+            }
+
+            const query = `
+              query($issueNodeId: ID!) {
+                node(id: $issueNodeId) {
+                  ... on Issue {
+                    projectItems(first: 20) {
+                      nodes {
+                        id
+                        project { id }
+            
+                        fieldValueByName(name: "Status") {
+                           ... on ProjectV2ItemFieldSingleSelectValue {
+                            optionId
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }`;
+            
+            const variables = { 
+              issueNodeId
+            };
+            const result = await github.graphql(query, variables);
+            
+            const projectItem = result.node.projectItems.nodes.find(item => item.project.id === PROJECT_ID);
+
+            if (!projectItem) {
+              console.log(`Issue #${issueNumber} is not in project ${PROJECT_ID}. Skipping.`);
+              return;
+            }
+
+            const currentStatusOptionId = projectItem.fieldValueByName?.optionId;
+            console.log(`Current status ID: ${currentStatusOptionId}`);
+
+            if (currentStatusOptionId !== TODO_OPTION_ID) {
+              console.log(`Issue is not in 'To Do' status (current: ${currentStatusOptionId}, expected: ${TODO_OPTION_ID}). Skipping mutation.`);
+              return;
+            }
+
+            console.log("Issue is in 'To Do' status. Proceeding to update...");
+            const projectItemId = projectItem.id;
+            console.log(`Found Project Item ID: ${projectItemId}`);
+
+            const mutation = `
+              mutation($project_id: ID!, $item_id: ID!, $field_id: ID!, $option_id: String!) {
+                updateProjectV2ItemFieldValue(
+                  input: {
+                    projectId: $project_id,
+                    itemId: $item_id,
+                    fieldId: $field_id,
+                    value: { singleSelectOptionId: $option_id }
+                  }
+                ) {
+                  clientMutationId
+                }
+              }`;
+            const mutationVars = {
+              project_id: PROJECT_ID,
+              item_id: projectItemId,
+              field_id: STATUS_FIELD_ID,
+              option_id: IN_PROGRESS_OPTION_ID
+            };
+            
+            await github.graphql(mutation, mutationVars);
+            console.log(`Successfully updated issue #${issueNumber} status to 'In Progress'.`);

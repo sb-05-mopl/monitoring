@@ -1,0 +1,30 @@
+name: 이슈 템플릿
+description: 브랜치 생성 및 작업 관리를 위한 이슈 템플릿
+labels: [feat]
+
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: 이슈 요약
+      description: 이슈의 목적 또는 핵심 내용을 한 줄로 요약하세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: 상세 설명
+      description: 수행할 작업의 상세 내용, 동작 방식, 또는 문제 상황을 구체적으로 작성하세요.
+      placeholder: |
+        - description
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: 작업 항목
+      description: 완료해야 할 구체적인 작업을 체크리스트로 작성하세요.
+      placeholder: |
+        - [ ] checklist
