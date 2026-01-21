@@ -10,3 +10,18 @@ scrape_configs:
     honor_labels: true
     static_configs:
       - targets: ["pushgateway:9091"]
+
+  - job_name: "batch"
+    static_configs:
+      - targets: [ "10.0.0.176:8082" ]
+    metrics_path: "/actuator/prometheus"
+
+  - job_name: "spring-core"
+    static_configs:
+      - targets: [ "10.0.0.84:8080" ]
+    metrics_path: "/actuator/prometheus"
+
+  - job_name: "websocket"
+    static_configs:
+      - targets: [ "10.0.0.71:8080" ]
+    metrics_path: "/actuator/prometheus"
