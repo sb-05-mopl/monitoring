@@ -4,12 +4,12 @@ on:
     branches:
       - main
       - deploy
-    paths:
-      - "docker-compose.yml"
-      - "prometheus/**"
-      - "grafana/**"
-      - ".github/workflows/deploy-monitoring.yml"
-      - "deploy/**"
+#    paths:
+#      - "docker-compose.yml"
+#      - "prometheus/**"
+#      - "grafana/**"
+#      - ".github/workflows/deploy-monitoring.yml"
+#      - "deploy/**"
 
 jobs:
   deploy:
