@@ -11,17 +11,20 @@ scrape_configs:
     static_configs:
       - targets: ["pushgateway:9091"]
 
-  - job_name: "batch"
+  - job_name: "spring-api"
     static_configs:
-      - targets: [ "10.0.0.176:8082" ]
-    metrics_path: "/actuator/prometheus"
+      - targets: [ "host.docker.internal:80" ]
+    metrics_path: /actuator/core/prometheus
 
-  - job_name: "spring-core"
+  - job_name: "websocket-server"
     static_configs:
-      - targets: [ "10.0.0.84:8080" ]
-    metrics_path: "/actuator/prometheus"
+      - targets: [ "host.docker.internal:80" ]
+    metrics_path: /actuator/ws/prometheus
 
-  - job_name: "websocket"
+  - job_name: "postgres"
     static_configs:
-      - targets: [ "10.0.0.71:8080" ]
-    metrics_path: "/actuator/prometheus"
+      - targets: [ "postgres-exporter:9187" ]
+
+  - job_name: "elasticsearch"
+    static_configs:
+      - targets: [ "elasticsearch-exporter:9114" ]

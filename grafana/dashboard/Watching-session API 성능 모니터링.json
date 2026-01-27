@@ -1,0 +1,817 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/contents/.*/watching-sessions\", method=\"GET\"}[1m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/contents/.*/watching-sessions\", method=\"GET\"}[1m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/contents/.*/watching-sessions\", method=\"GET\"}[1m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "API 응답시간 (p50/p95/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.005
+              },
+              {
+                "color": "red",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "rate(watching_session_redis_find_seconds_sum[1m]) / rate(watching_session_redis_find_seconds_count[1m])",
+          "legendFormat": "Redis: 세션 조회",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(watching_session_redis_hasmore_seconds_sum[1m]) / rate(watching_session_redis_hasmore_seconds_count[1m])",
+          "legendFormat": "Redis: hasMore",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(watching_session_redis_count_seconds_sum[1m]) / rate(watching_session_redis_count_seconds_count[1m])",
+          "legendFormat": "Redis: count",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(watching_session_db_user_seconds_sum[1m]) / rate(watching_session_db_user_seconds_count[1m])",
+          "legendFormat": "DB: User 배치",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(watching_session_db_content_seconds_sum[1m]) / rate(watching_session_db_content_seconds_count[1m])",
+          "legendFormat": "DB: Content",
+          "refId": "E"
+        },
+        {
+          "expr": "rate(watching_session_db_tag_seconds_sum[1m]) / rate(watching_session_db_tag_seconds_count[1m])",
+          "legendFormat": "DB: Tag",
+          "refId": "F"
+        }
+      ],
+      "title": "구간별 평균 시간",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "increase(watching_session_redis_find_seconds_count[1m])",
+          "legendFormat": "Redis 세션 조회",
+          "refId": "A"
+        },
+        {
+          "expr": "increase(watching_session_db_user_seconds_count[1m])",
+          "legendFormat": "DB User",
+          "refId": "B"
+        },
+        {
+          "expr": "increase(watching_session_db_content_seconds_count[1m])",
+          "legendFormat": "DB Content",
+          "refId": "C"
+        }
+      ],
+      "title": "호출 횟수 (1분간)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Redis 총 시간 vs DB 총 시간 비교",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 0.05,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.02
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "(rate(watching_session_redis_find_seconds_sum[1m]) + rate(watching_session_redis_hasmore_seconds_sum[1m]) + rate(watching_session_redis_count_seconds_sum[1m])) / (rate(watching_session_redis_find_seconds_count[1m]) + rate(watching_session_redis_hasmore_seconds_count[1m]) + rate(watching_session_redis_count_seconds_count[1m]))",
+          "legendFormat": "Redis Total",
+          "refId": "A"
+        }
+      ],
+      "title": "Redis 평균 총 시간",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "DB 쿼리 총 시간",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 0.05,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.02
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "(rate(watching_session_db_user_seconds_sum[1m]) + rate(watching_session_db_content_seconds_sum[1m]) + rate(watching_session_db_tag_seconds_sum[1m])) / (rate(watching_session_db_user_seconds_count[1m]) + rate(watching_session_db_content_seconds_count[1m]) + rate(watching_session_db_tag_seconds_count[1m]))",
+          "legendFormat": "DB Total",
+          "refId": "A"
+        }
+      ],
+      "title": "DB 평균 총 시간",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/Redis.*/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/DB.*/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(watching_session_redis_find_seconds_sum[1m]) / rate(watching_session_redis_find_seconds_count[1m])",
+          "legendFormat": "Redis: 세션 조회",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(watching_session_redis_hasmore_seconds_sum[1m]) / rate(watching_session_redis_hasmore_seconds_count[1m])",
+          "legendFormat": "Redis: hasMore",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(watching_session_redis_count_seconds_sum[1m]) / rate(watching_session_redis_count_seconds_count[1m])",
+          "legendFormat": "Redis: count",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(watching_session_db_user_seconds_sum[1m]) / rate(watching_session_db_user_seconds_count[1m])",
+          "legendFormat": "DB: User 배치",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(watching_session_db_content_seconds_sum[1m]) / rate(watching_session_db_content_seconds_count[1m])",
+          "legendFormat": "DB: Content",
+          "refId": "E"
+        },
+        {
+          "expr": "rate(watching_session_db_tag_seconds_sum[1m]) / rate(watching_session_db_tag_seconds_count[1m])",
+          "legendFormat": "DB: Tag",
+          "refId": "F"
+        }
+      ],
+      "title": "구간별 응답시간 추이",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "increase(watching_session_redis_find_seconds_count[1m])",
+          "legendFormat": "Redis: 세션 조회",
+          "refId": "A"
+        },
+        {
+          "expr": "increase(watching_session_redis_hasmore_seconds_count[1m])",
+          "legendFormat": "Redis: hasMore",
+          "refId": "B"
+        },
+        {
+          "expr": "increase(watching_session_redis_count_seconds_count[1m])",
+          "legendFormat": "Redis: count",
+          "refId": "C"
+        },
+        {
+          "expr": "increase(watching_session_db_user_seconds_count[1m])",
+          "legendFormat": "DB: User",
+          "refId": "D"
+        },
+        {
+          "expr": "increase(watching_session_db_content_seconds_count[1m])",
+          "legendFormat": "DB: Content",
+          "refId": "E"
+        },
+        {
+          "expr": "increase(watching_session_db_tag_seconds_count[1m])",
+          "legendFormat": "DB: Tag",
+          "refId": "F"
+        }
+      ],
+      "title": "호출 횟수 추이 (Stacked)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Redis vs DB 시간 비율",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Redis"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DB"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 8,
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "sum(rate(watching_session_redis_find_seconds_sum[1m])) + sum(rate(watching_session_redis_hasmore_seconds_sum[1m])) + sum(rate(watching_session_redis_count_seconds_sum[1m]))",
+          "legendFormat": "Redis",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(watching_session_db_user_seconds_sum[1m])) + sum(rate(watching_session_db_content_seconds_sum[1m])) + sum(rate(watching_session_db_tag_seconds_sum[1m]))",
+          "legendFormat": "DB",
+          "refId": "B"
+        }
+      ],
+      "title": "Redis vs DB 시간 비율",
+      "type": "piechart"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [
+    "watching-session",
+    "websocket",
+    "performance",
+    "redis"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "prometheus",
+          "value": "prometheus"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "WatchingSession 성능 모니터링",
+  "uid": "watching-session-perf",
+  "version": 1,
+  "weekStart": ""
+}

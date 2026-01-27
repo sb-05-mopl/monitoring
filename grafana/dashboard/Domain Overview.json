@@ -1,0 +1,631 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 7,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/auth.*\"}[1m])) by (le))",
+          "legendFormat": "Auth",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/users.*\"}[1m])) by (le))",
+          "legendFormat": "User",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/contents.*\"}[1m])) by (le))",
+          "legendFormat": "Content",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/playlists.*\"}[1m])) by (le))",
+          "legendFormat": "Playlist",
+          "refId": "D"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/reviews.*\"}[1m])) by (le))",
+          "legendFormat": "Review",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/follows.*\"}[1m])) by (le))",
+          "legendFormat": "Follow",
+          "refId": "F"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/conversations.*\"}[1m])) by (le))",
+          "legendFormat": "Conversation",
+          "refId": "G"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/notifications.*\"}[1m])) by (le))",
+          "legendFormat": "Notification",
+          "refId": "H"
+        }
+      ],
+      "title": "도메인별 p95 응답시간",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 101,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/auth.*\"}[1m]))",
+          "legendFormat": "Auth",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/users.*\"}[1m]))",
+          "legendFormat": "User",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/contents.*\"}[1m]))",
+          "legendFormat": "Content",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/playlists.*\"}[1m]))",
+          "legendFormat": "Playlist",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/reviews.*\"}[1m]))",
+          "legendFormat": "Review",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/follows.*\"}[1m]))",
+          "legendFormat": "Follow",
+          "refId": "F"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/conversations.*\"}[1m]))",
+          "legendFormat": "Conversation",
+          "refId": "G"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/notifications.*\"}[1m]))",
+          "legendFormat": "Notification",
+          "refId": "H"
+        }
+      ],
+      "title": "도메인별 TPS (초당 요청)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.1
+              },
+              {
+                "color": "red",
+                "value": 0.3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 102,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/auth.*\"}[5m])) by (le))",
+          "legendFormat": "Auth",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/users.*\"}[5m])) by (le))",
+          "legendFormat": "User",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/contents.*\"}[5m])) by (le))",
+          "legendFormat": "Content",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/playlists.*\"}[5m])) by (le))",
+          "legendFormat": "Playlist",
+          "refId": "D"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/reviews.*\"}[5m])) by (le))",
+          "legendFormat": "Review",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/follows.*\"}[5m])) by (le))",
+          "legendFormat": "Follow",
+          "refId": "F"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/conversations.*\"}[5m])) by (le))",
+          "legendFormat": "Conversation",
+          "refId": "G"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=~\"/api/notifications.*\"}[5m])) by (le))",
+          "legendFormat": "Notification",
+          "refId": "H"
+        }
+      ],
+      "title": "도메인별 p95 현재값",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 103,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/auth.*\"}[1m]))",
+          "legendFormat": "Auth",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/users.*\"}[1m]))",
+          "legendFormat": "User",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/contents.*\"}[1m]))",
+          "legendFormat": "Content",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/playlists.*\"}[1m]))",
+          "legendFormat": "Playlist",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/reviews.*\"}[1m]))",
+          "legendFormat": "Review",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/follows.*\"}[1m]))",
+          "legendFormat": "Follow",
+          "refId": "F"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/conversations.*\"}[1m]))",
+          "legendFormat": "Conversation",
+          "refId": "G"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=~\"/api/notifications.*\"}[1m]))",
+          "legendFormat": "Notification",
+          "refId": "H"
+        }
+      ],
+      "title": "도메인별 호출량 (1분간)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 104,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/auth.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Auth",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/users.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "User",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/contents.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Content",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/playlists.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Playlist",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/reviews.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Review",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/follows.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Follow",
+          "refId": "F"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/conversations.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Conversation",
+          "refId": "G"
+        },
+        {
+          "expr": "sum(irate(http_server_requests_seconds_count{uri=~\"/api/notifications.*\", status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "Notification",
+          "refId": "H"
+        }
+      ],
+      "title": "도메인별 에러율 (5xx)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "prometheus",
+          "value": "dfaaun98fjo5cb"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Domain Overview",
+  "uid": "domain-overview",
+  "version": 4,
+  "weekStart": ""
+}

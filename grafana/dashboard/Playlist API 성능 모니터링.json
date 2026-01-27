@@ -1,0 +1,1262 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{uri=\"/api/playlists\", method=\"GET\", job=\"spring-api\"}[1m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{uri=\"/api/playlists\", method=\"GET\", job=\"spring-api\"}[1m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{uri=\"/api/playlists\", method=\"GET\", job=\"spring-api\"}[1m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "title": "API 응답시간 (p50/p95/p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.1
+              },
+              {
+                "color": "red",
+                "value": 0.3
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "mapping (DTO 변환)",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_search_repository_main_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_repository_main_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "repository.main",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_search_repository_count_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_repository_count_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "repository.count",
+          "refId": "C"
+        }
+      ],
+      "title": "구간별 평균 시간",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "increase(playlist_search_repository_main_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "main 쿼리",
+          "refId": "A"
+        },
+        {
+          "expr": "increase(playlist_toDto_subscriberCount_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "toDto 호출",
+          "refId": "B"
+        },
+        {
+          "expr": "increase(playlist_toContentSummary_tags_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "tags 쿼리",
+          "refId": "C"
+        }
+      ],
+      "title": "N+1 호출 횟수 (1분간)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 50,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "x"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "increase(playlist_toDto_subscriberCount_seconds_count{job=\"spring-api\"}[1m]) / increase(playlist_search_repository_main_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "toDto / main",
+          "refId": "A"
+        }
+      ],
+      "title": "N+1 비율 (toDto / main)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 8
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{job=\"spring-api\"}",
+          "legendFormat": "Active",
+          "refId": "A"
+        },
+        {
+          "expr": "hikaricp_connections_pending{job=\"spring-api\"}",
+          "legendFormat": "Pending",
+          "refId": "B"
+        },
+        {
+          "expr": "hikaricp_connections_idle{job=\"spring-api\"}",
+          "legendFormat": "Idle",
+          "refId": "C"
+        }
+      ],
+      "title": "DB 커넥션 - API 서버",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(playlist_toDto_subscriberCount_seconds_sum{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscriberCount",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_toDto_subscribedByMe_seconds_sum{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscribedByMe",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_toDto_contents_seconds_sum{job=\"spring-api\"}[1m])",
+          "legendFormat": "contents",
+          "refId": "C"
+        }
+      ],
+      "title": "toDto 내부 시간 분포",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 14
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(playlist_search_repository_main_seconds_count{job=\"spring-api\"}[1m]) * 60",
+          "legendFormat": "main 쿼리/분",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_toDto_subscriberCount_seconds_count{job=\"spring-api\"}[1m]) * 60",
+          "legendFormat": "toDto/분",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_toContentSummary_tags_seconds_count{job=\"spring-api\"}[1m]) * 60",
+          "legendFormat": "tags 쿼리/분",
+          "refId": "C"
+        }
+      ],
+      "title": "호출 횟수 추이",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "mapping (DTO 변환)",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_search_repository_main_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_repository_main_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "repository.main",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_toDto_contents_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_toDto_contents_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "toDto.contents",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(playlist_toContentSummary_tags_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_toContentSummary_tags_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "tags 쿼리",
+          "refId": "D"
+        }
+      ],
+      "title": "구간별 시간 추이",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 30
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "increase(http_server_requests_seconds_count{uri=\"/api/playlists\", method=\"GET\", job=\"spring-api\"}[1m])",
+          "legendFormat": "GET /api/playlists",
+          "refId": "A"
+        }
+      ],
+      "title": "API 호출 횟수 (1분간)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 6,
+        "y": 30
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=\"/api/playlists\", method=\"GET\", job=\"spring-api\"}[1m]) * 60",
+          "legendFormat": "호출/분",
+          "refId": "A"
+        }
+      ],
+      "title": "API 호출 횟수 추이",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 14,
+        "y": 30
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{job=\"spring-api\"}",
+          "legendFormat": "Active",
+          "refId": "A"
+        },
+        {
+          "expr": "hikaricp_connections_pending{job=\"spring-api\"}",
+          "legendFormat": "Pending",
+          "refId": "B"
+        },
+        {
+          "expr": "hikaricp_connections_idle{job=\"spring-api\"}",
+          "legendFormat": "Idle",
+          "refId": "C"
+        }
+      ],
+      "title": "DB 커넥션 추이 - API 서버",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 20,
+      "panels": [],
+      "title": "배치 쿼리 메트릭",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 21,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "expr": "rate(playlist_search_subscriberCount_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscriberCount_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscriberCount (배치)",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_search_subscribedByMe_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscribedByMe_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscribedByMe (배치)",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_search_contents_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_contents_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "contents (배치)",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(playlist_search_tags_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_tags_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "tags (배치)",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "mapping (DTO 변환)",
+          "refId": "E"
+        }
+      ],
+      "title": "배치 쿼리 구간별 평균 시간",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "시간 (초)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(playlist_search_subscriberCount_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscriberCount_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscriberCount",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_search_subscribedByMe_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscribedByMe_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "subscribedByMe",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(playlist_search_contents_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_contents_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "contents",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(playlist_search_tags_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_tags_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "tags",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "mapping",
+          "refId": "E"
+        }
+      ],
+      "title": "배치 쿼리 시간 추이",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "배치 쿼리 총 시간 = subscriberCount + subscribedByMe + contents + tags + mapping",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "(rate(playlist_search_subscriberCount_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscriberCount_seconds_count{job=\"spring-api\"}[1m])) + (rate(playlist_search_subscribedByMe_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_subscribedByMe_seconds_count{job=\"spring-api\"}[1m])) + (rate(playlist_search_contents_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_contents_seconds_count{job=\"spring-api\"}[1m])) + (rate(playlist_search_tags_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_tags_seconds_count{job=\"spring-api\"}[1m])) + (rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m]))",
+          "legendFormat": "After (배치 총합)",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(playlist_search_mapping_seconds_sum{job=\"spring-api\"}[1m]) / rate(playlist_search_mapping_seconds_count{job=\"spring-api\"}[1m])",
+          "legendFormat": "Before (mapping only - N+1 포함)",
+          "refId": "B"
+        }
+      ],
+      "title": "Before vs After 처리 시간 비교",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "prometheus",
+          "value": "dfaaun98fjo5cb"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Playlist API 성능 모니터링",
+  "uid": "playlist-api-perf",
+  "version": 6,
+  "weekStart": ""
+}
