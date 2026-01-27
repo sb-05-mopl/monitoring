@@ -1,0 +1,58 @@
+name: Deploy Monitoring To EC2
+on:
+  push:
+    branches:
+      - main
+      - deploy
+#    paths:
+#      - "docker-compose.yml"
+#      - "prometheus/**"
+#      - "grafana/**"
+#      - ".github/workflows/deploy-monitoring.yml"
+#      - "deploy/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub Repository 가져오기
+        uses: actions/checkout@v4
+
+      - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_KEY}}
+
+      - name: .env 파일 생성
+        run: |
+          cat > .env << EOF
+          RUN_UID=${{secrets.RUN_UID}}
+          RUN_GID=${{secrets.RUN_GID}}
+          GRAFANA_ADMIN_USER=${{secrets.GRAFANA_ADMIN_USER}}
+          GRAFANA_ADMIN_PASSWORD=${{secrets.GRAFANA_ADMIN_PASSWORD}}
+          EOF
+
+      - name: 압축하기
+        run: |
+          cp deploy/monitoring/appspec.yml ./appspec.yml
+          cp -r deploy/monitoring/scripts ./scripts
+          tar -czvf $GITHUB_SHA.tar.gz \
+            appspec.yml \
+            .env \
+            scripts \
+            docker-compose.yml \
+            prometheus \
+            grafana
+
+      - name: S3에 프로젝트 폴더 업로드 하기
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://mopl-deploy-4/monitoring/$GITHUB_SHA.tar.gz
+
+      - name: CodeDeploy 배포 트리거
+        run: |
+          aws deploy create-deployment \
+            --application-name mopl-monitoring \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name mopl-deploy-group-monitoring \
+            --s3-location bucket=mopl-deploy-4,key=monitoring/$GITHUB_SHA.tar.gz,bundleType=tgz
