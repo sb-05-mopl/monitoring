@@ -122,3 +122,4 @@ replay_pid*
 /.gradle
 /*.log
 
+/data/
